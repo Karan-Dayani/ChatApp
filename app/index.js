@@ -1,7 +1,17 @@
 import { Stack } from "expo-router";
 import { useEffect, useState, useRef } from "react";
-import { Pressable, Text, TextInput, View, ScrollView } from "react-native";
+import {
+  Pressable,
+  Text,
+  TextInput,
+  View,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import { io } from "socket.io-client";
+import { EvilIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 const ENDPOINT = "http://192.168.0.111:3000";
 let socket;
@@ -68,47 +78,66 @@ const indexPage = () => {
 
   if (!user.username) {
     return (
-      <View className="justify-center h-full items-center">
-        <Stack.Screen options={{ headerTitle: "Login" }} />
-        <View className="bg-orange-400 rounded-md p-5 items-center">
-          <Text className="mb-1 text-lg text-orange-900">Enter Your Name</Text>
+      <View className="pt-48 h-screen bg-teal-100 items-center">
+        <Stack.Screen
+          options={{
+            headerTitle: "Login",
+            headerStyle: {
+              backgroundColor: "rgb(153 246 228)",
+            },
+            headerTintColor: "rgb(19 78 74)",
+            headerShadowVisible: false,
+          }}
+        />
+        <View className="rounded-md p-5 items-center w-full">
+          <Text className="mb-1 text-2xl text-teal-900">Enter Your Name</Text>
           <TextInput
-            className="my-1 border-2 border-orange-900 rounded-md w-52 px-2 text-lg text-orange-900"
-            placeholder="username..."
+            className="w-full my-1 border-2 border-teal-900 rounded-md px-2 text-2xl text-teal-900"
             defaultValue={userInput}
             onChangeText={(value) => setUserInput(value)}
           />
-          <Pressable
-            onPress={() => handleJoin()}
-            className="bg-orange-700 rounded-md w-full mt-1"
-          >
-            <Text className="mx-2 my-1 text-lg">Join</Text>
-          </Pressable>
+          <View className="items-end w-full">
+            <Pressable
+              onPress={() => handleJoin()}
+              className="rounded-sm mt-2 bg-teal-400"
+            >
+              <Text className="mx-2 my-1 text-2xl text-teal-900">Join</Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     );
   }
   if (chatArea) {
     return (
-      <View className="h-full w-full justify-between">
+      <View className="h-full w-full justify-between bg-teal-100">
         <Stack.Screen
           options={{
             headerTitle: room.username,
             headerLeft: () => (
-              <Text
+              // <Text
+              //   onPress={() => setChatArea(false)}
+              //   style={{
+              //     paddingRight: 20,
+              //   }}
+              // >
+              //   Back
+              // </Text>
+              <Ionicons
+                name="arrow-back"
+                size={24}
+                color="rgb(19 78 74)"
                 onPress={() => setChatArea(false)}
                 style={{
                   paddingRight: 20,
                 }}
-              >
-                Back
-              </Text>
+              />
             ),
           }}
         />
         <ScrollView
           ref={scrollViewRef}
-          className="w-full mt-2"
+          className="w-full"
           showsVerticalScrollIndicator={false}
         >
           {chat.map((item, index) => {
@@ -125,7 +154,7 @@ const indexPage = () => {
                   }
                   key={index}
                 >
-                  <Text
+                  {/* <Text
                     className={
                       item.sender.username === user.username
                         ? "w-full text-right text-[10px]"
@@ -135,33 +164,35 @@ const indexPage = () => {
                     {item.sender.username === user.username
                       ? "You"
                       : user.username}
-                  </Text>
+                  </Text> */}
                   <View
                     className={
                       item.sender.username === user?.username
-                        ? "bg-green-400 p-3 rounded-l-lg rounded-tr-lg"
-                        : "bg-gray-300 p-3 rounded-r-lg rounded-tl-lg"
+                        ? "bg-teal-400 p-3 rounded-l-lg rounded-tr-lg"
+                        : "bg-teal-300 p-3 rounded-r-lg rounded-tl-lg"
                     }
                   >
-                    <Text>{item.message}</Text>
+                    <Text className="text-md text-teal-950">
+                      {item.message}
+                    </Text>
                   </View>
                 </View>
               );
             }
           })}
         </ScrollView>
-        <View className="flex-row w-[80%] justify-between">
-          <View className="w-full">
+        <View className="flex-row w-full justify-between mb-4 divide-x px-4 h-12 divide-teal-700">
+          <View className="w-3/4">
             <TextInput
-              className="border-2 p-5 "
-              placeholder="Type here..."
+              className="bg-teal-200 rounded-l-lg px-2 h-full text-teal-800 text-lg"
+              placeholder="Message..."
               value={chatInput}
               onChangeText={(value) => setChatInput(value)}
             />
           </View>
-          <View className="justify-center items-center w-[25%] border-2">
+          <View className="justify-center items-center w-1/4 bg-teal-200 rounded-r-lg">
             <Pressable onPress={() => sendMessage()}>
-              <Text>Send</Text>
+              <MaterialIcons name="send" size={28} color="rgb(15 118 110)" />
             </Pressable>
           </View>
         </View>
@@ -169,23 +200,38 @@ const indexPage = () => {
     );
   }
   return (
-    <View>
-      <Stack.Screen options={{ headerTitle: "Friends" }} />
-      <Text className="text-2xl p-5">Hello {user.username}</Text>
-      {users.map((u, i) => {
-        if (u.userId != user.userId) {
-          return (
-            <View key={i} className="py-3 px-5">
-              <Text
-                className="bg-orange-300 p-6 border-2 rounded-[20px]"
+    <View className="bg-teal-100 h-full pb-4">
+      <Stack.Screen
+        options={{
+          headerTitle: "Chat App",
+          headerLeft: () => {},
+          headerRight: () => (
+            <Ionicons name="settings-outline" size={24} color="rgb(17 94 89)" />
+          ),
+        }}
+      />
+      {/* <Text className="text-2xl p-5 text-teal-900">Hello, {user.username}</Text> */}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className="divide-y divide-teal-800"
+      >
+        {users.map((u, i) => {
+          if (u.userId != user.userId) {
+            return (
+              <Pressable
+                key={i}
+                className="flex-row items-center pl-4"
                 onPress={() => connectRoom(u)}
               >
-                <Text className="text-xl">{u?.username}</Text>
-              </Text>
-            </View>
-          );
-        }
-      })}
+                <EvilIcons name="user" size={50} color="rgb(17 94 89)" />
+                <Text className="bg-teal-100 p-4">
+                  <Text className="text-2xl text-teal-800">{u?.username}</Text>
+                </Text>
+              </Pressable>
+            );
+          }
+        })}
+      </ScrollView>
     </View>
   );
 };
