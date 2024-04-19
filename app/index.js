@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
 import { useEffect, useState, useRef } from "react";
 import {
   Pressable,
@@ -206,7 +206,17 @@ const indexPage = () => {
           headerTitle: "Chat App",
           headerLeft: () => {},
           headerRight: () => (
-            <Ionicons name="settings-outline" size={24} color="rgb(17 94 89)" />
+            <Ionicons
+              name="settings-outline"
+              size={24}
+              color="rgb(17 94 89)"
+              onPress={() => {
+                router.push({
+                  pathname: "/settings",
+                  params: user,
+                });
+              }}
+            />
           ),
         }}
       />
